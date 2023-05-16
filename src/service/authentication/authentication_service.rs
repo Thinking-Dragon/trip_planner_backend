@@ -5,6 +5,7 @@ use crate::service::user_service::UserService;
 
 use super::claims::Claims;
 
+#[derive(Clone, Copy)]
 pub struct AuthenticationService {
     user_service: UserService,
 }
