@@ -3,7 +3,7 @@ use rocket::{State, http::CookieJar, serde::json::Json};
 use crate::{controller::{event_controller::EventController, error_messages::make_authentication_failed_error}, service::authentication::authentication_service::AuthenticationService, model::event::Event};
 
 #[get("/trips/<trip_id>/events")]
-async fn get_trip_events(
+pub async fn get_trip_events(
     authentication_service: &State<AuthenticationService>,
     event_controller: &State<EventController>,
     cookie_jar: &CookieJar<'_>,
@@ -19,7 +19,7 @@ async fn get_trip_events(
 }
 
 #[get("/trips/<trip_id>/events/<event_id>")]
-async fn get_trip_event(
+pub async fn get_trip_event(
     authentication_service: &State<AuthenticationService>,
     event_controller: &State<EventController>,
     cookie_jar: &CookieJar<'_>,
@@ -36,7 +36,7 @@ async fn get_trip_event(
 }
 
 #[post("/trips/<trip_id>/events", format="json", data="<body>")]
-async fn post_trip_event(
+pub async fn post_trip_event(
     authentication_service: &State<AuthenticationService>,
     event_controller: &State<EventController>,
     cookie_jar: &CookieJar<'_>,
@@ -54,7 +54,7 @@ async fn post_trip_event(
 }
 
 #[put("/trips/<trip_id>/events/<event_id>", format="json", data="<body>")]
-async fn put_trip_event(
+pub async fn put_trip_event(
     authentication_service: &State<AuthenticationService>,
     event_controller: &State<EventController>,
     cookie_jar: &CookieJar<'_>,
@@ -73,7 +73,7 @@ async fn put_trip_event(
 }
 
 #[get("/event_types")]
-async fn get_event_types(
+pub async fn get_event_types(
     authentication_service: &State<AuthenticationService>,
     event_controller: &State<EventController>,
     cookie_jar: &CookieJar<'_>

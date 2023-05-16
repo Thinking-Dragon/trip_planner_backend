@@ -3,7 +3,7 @@ use rocket::{State, http::CookieJar, serde::json::Json};
 use crate::{controller::{trip_controller::TripController, error_messages::make_authentication_failed_error}, model::trip::Trip, service::authentication::authentication_service::{self, AuthenticationService}};
 
 #[get("/trips")]
-async fn get_trips(
+pub async fn get_trips(
     authentication_service: &State<AuthenticationService>,
     trip_controller: &State<TripController>,
     cookie_jar: &CookieJar<'_>
@@ -18,7 +18,7 @@ async fn get_trips(
 }
 
 #[get("/trips/<trip_id>")]
-async fn get_trip(
+pub async fn get_trip(
     authentication_service: &State<AuthenticationService>,
     trip_controller: &State<TripController>,
     trip_id: String,
@@ -34,7 +34,7 @@ async fn get_trip(
 }
 
 #[post("/trips", format="json", data="<body>")]
-async fn post_trip(
+pub async fn post_trip(
     authentication_service: &State<AuthenticationService>,
     trip_controller: &State<TripController>,
     cookie_jar: &CookieJar<'_>,
@@ -51,7 +51,7 @@ async fn post_trip(
 }
 
 #[put("/trips/<trip_id>", format="json", data="<body>")]
-async fn put_trip(
+pub async fn put_trip(
     authentication_service: &State<AuthenticationService>,
     trip_controller: &State<TripController>,
     cookie_jar: &CookieJar<'_>,
