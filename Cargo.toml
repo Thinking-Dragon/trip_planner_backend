@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chrono = { version = "0.4.24", features = ["serde"] }
 rocket = { version = "=0.5.0-rc.3", features = ["json"] }
 rocket_contrib = "0.4.11"
 serde = { version = "1.0.163", features = ["derive"] }
