@@ -1,2 +1,3 @@
 pub mod cost;
 pub mod currency;
+pub mod event_type;
