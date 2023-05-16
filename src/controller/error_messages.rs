@@ -1,3 +1,7 @@
+pub fn make_wrong_credentials_error() -> String {
+    return "Wrong credentials".to_string();
+}
+
 pub fn make_authentication_failed_error() -> String {
     return "Authentication failed".to_string();
 }

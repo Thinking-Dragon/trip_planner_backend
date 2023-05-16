@@ -1,5 +1,6 @@
 use controller::{trip_controller::TripController, event_controller::EventController};
 use service::{trip_service::TripService, event_service::EventService, user_service::UserService, authentication::authentication_service::AuthenticationService};
+use route::authentication_routes::login;
 use route::trip_routes::{
     get_trips,
     get_trip,
@@ -36,6 +37,7 @@ fn rocket() -> _ {
         .manage(trip_controller)
         .manage(event_controller)
         .mount("/", routes![
+            login,
             get_trips,
             get_trip,
             post_trip,

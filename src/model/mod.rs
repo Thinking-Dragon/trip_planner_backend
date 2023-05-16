@@ -1,4 +1,5 @@
 pub mod cost;
+pub mod credentials;
 pub mod currency;
 pub mod event_type;
 pub mod event;
