@@ -1,7 +1,9 @@
+use chrono::Utc;
 use jsonwebtoken::{decode, DecodingKey, Validation, Algorithm, encode, Header, EncodingKey};
 use rocket::http::{CookieJar, Cookie};
+use pwhash::bcrypt;
 
-use crate::{service::user_service::UserService, controller::error_messages::make_wrong_credentials_error, model::credentials::{self, Credentials}};
+use crate::{service::user_service::UserService, model::{credentials::Credentials, user::User}};
 
 use super::claims::Claims;
 
@@ -15,6 +17,19 @@ impl AuthenticationService {
         Self { user_service }
     }
 
+    pub fn make_account(self, user: User) -> bool {
+        let username_taken = self.user_service.get_user_by_name(user.clone().name).is_some();
+        
+        if username_taken {
+            return false;
+        }
+
+        let hashed_user = self.hash_user(user);
+        self.user_service.create_user(hashed_user);
+
+        return true;
+    }
+
     pub async fn authenticate(self, cookie_jar: &CookieJar<'_>, credentials: Credentials) -> Option<String> {
         let user = self.user_service.get_user_by_name(credentials.username);
 
@@ -22,13 +37,14 @@ impl AuthenticationService {
             return None;
         }
 
-        if user.clone().unwrap().password != credentials.password {
-
+        if !self.is_password_valid(credentials.password, user.clone().unwrap().password) {
+            return None;
         }
 
         let user_id = user.unwrap().id;
 
-        let token = self.encode_token(Claims { user_id: user_id.clone() });
+        let exp = Utc::now().checked_add_signed(chrono::Duration::minutes(1)).expect("valid timestamp").timestamp() as usize;
+        let token = self.encode_token(Claims { sub: user_id.clone(), exp });
         cookie_jar.add(Cookie::new("token", token));
 
         return Some(user_id);
@@ -49,7 +65,7 @@ impl AuthenticationService {
         }
 
         let claims = decoding_result.unwrap().claims;
-        let user_id = claims.user_id;
+        let user_id = claims.sub;
 
         return Some(user_id);
     }
@@ -64,7 +80,18 @@ impl AuthenticationService {
         return token_data;
     }
 
+    fn hash_user(self, user: User) -> User {
+        let mut hashed_user = user.clone();
+        hashed_user.password = self.hash_password(hashed_user.password);
+        return hashed_user;
+    }
+
     fn hash_password(self, password: String) -> String {
-        return password;
+        let hash = bcrypt::hash(password).unwrap();
+        return hash;
+    }
+
+    fn is_password_valid(self, password: String, hash: String) -> bool {
+        return bcrypt::verify(password, &hash);
     }
 }
